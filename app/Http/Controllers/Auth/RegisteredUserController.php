@@ -45,6 +45,7 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // Redirect to organization setup for new users
+        return redirect(route('organization.setup', absolute: false));
     }
 }

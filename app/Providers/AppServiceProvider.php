@@ -19,6 +19,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Register event listeners
+        \Event::listen(
+            \Illuminate\Auth\Events\Login::class,
+            \App\Listeners\RecordLoginActivity::class,
+        );
+
+        // Register observers
     }
 }
