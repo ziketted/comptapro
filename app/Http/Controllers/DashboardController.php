@@ -6,6 +6,8 @@ use App\Models\Operation;
 use App\Models\Account;
 use App\Models\Beneficiary;
 use App\Models\Currency;
+use App\Models\ExchangeRate;
+use App\Services\AccountingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -27,10 +29,57 @@ class DashboardController extends Controller
         $totalBeneficiaries = Beneficiary::active()->count();
         $pendingTransactions = Operation::pending()->count();
 
-        // Get total balance in base currency
+        // Get total balance using AccountingService (properly handles transfers and multi-cashbox)
+        $accountingService = app(AccountingService::class);
+        $balancesByCurrency = [];
+        
+        foreach ($tenant->cashboxes as $cashbox) {
+            foreach ($tenant->activeCurrencies() as $currency) {
+                $balance = $accountingService->getBalance($cashbox, $currency);
+                
+                if (!isset($balancesByCurrency[$currency->code])) {
+                    $balancesByCurrency[$currency->code] = [
+                        'amount' => 0,
+                        'symbol' => $currency->symbol,
+                        'code' => $currency->code,
+                    ];
+                }
+                
+                $balancesByCurrency[$currency->code]['amount'] += $balance;
+            }
+        }
+        
+        // Calculate total balance by converting all currencies to base currency
+        $baseCurrency = $tenant->baseCurrency();
+        $totalBalance = 0;
+        
+        if ($baseCurrency) {
+            foreach ($balancesByCurrency as $currencyCode => $data) {
+                if ($currencyCode === $baseCurrency->code) {
+                    // Already in base currency
+                    $totalBalance += $data['amount'];
+                } else {
+                    // Convert to base currency using exchange rate
+                    // Try direct rate first (e.g., CDF -> USD)
+                    $rate = ExchangeRate::getRate($currencyCode, $baseCurrency->code);
+                    
+                    if ($rate == 1.0) {
+                        // No direct rate found, try inverse rate (e.g., USD -> CDF = 2200, so CDF -> USD = 1/2200)
+                        $inverseRate = ExchangeRate::getRate($baseCurrency->code, $currencyCode);
+                        if ($inverseRate != 1.0) {
+                            $rate = 1 / $inverseRate;
+                        }
+                    }
+                    
+                    $convertedAmount = $data['amount'] * $rate;
+                    $totalBalance += $convertedAmount;
+                }
+            }
+        }
+        
+        // Keep legacy calculations for monthly statistics
         $income = Operation::validated()->where('type', Operation::TYPE_INCOME)->sum('converted_amount');
         $expense = Operation::validated()->where('type', Operation::TYPE_EXPENSE)->sum('converted_amount');
-        $totalBalance = $income - $expense;
 
         // Get recent operations
         $recentTransactions = Operation::with(['account', 'beneficiary', 'currency', 'creator'])

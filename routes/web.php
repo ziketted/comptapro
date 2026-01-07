@@ -5,7 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', fn() => view('welcome'));
+Route::get('/', fn() => redirect()->route('login'));
 
 // Google OAuth routes
 Route::get('/auth/google', [App\Http\Controllers\Auth\GoogleAuthController::class, 'redirectToGoogle'])->name('auth.google');
@@ -37,6 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('operations')->name('operations.')->group(function () {
         Route::get('/', \App\Livewire\Operations\Index::class)->name('index');
         Route::get('/create', \App\Livewire\Operations\Create::class)->name('create');
+        Route::get('/{operation}/edit', \App\Livewire\Operations\Edit::class)->name('edit')->middleware('manager');
         
         Route::get('/validate', \App\Livewire\Operations\Validate::class)->name('validate');
     });
@@ -57,6 +58,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/features', \App\Livewire\Settings\TenantFeatures::class)->name('features');
         Route::get('/currency', \App\Livewire\Settings\Currency::class)->name('currency');
         Route::get('/cashboxes', \App\Livewire\Settings\Cashboxes::class)->name('cashboxes');
+        Route::get('/users', \App\Livewire\Settings\Users::class)->name('users');
     });
 
     // Reports routes (Manager only - check in component)

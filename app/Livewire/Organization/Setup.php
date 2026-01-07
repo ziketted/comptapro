@@ -160,10 +160,8 @@ class Setup extends Component
             foreach ($currencies as $currency) {
                 \App\Models\Account::create([
                     'tenant_id' => $tenant->id,
-                    'name' => "Caisse Principale {$currency}",
+                    'label' => "Caisse Principale {$currency}",
                     'type' => 'cash',
-                    'currency' => $currency,
-                    'balance' => 0,
                     'is_active' => true,
                 ]);
             }

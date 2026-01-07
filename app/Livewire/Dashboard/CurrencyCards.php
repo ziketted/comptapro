@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Account;
 use App\Models\Operation;
 use App\Models\Currency;
+use App\Services\AccountingService;
 
 class CurrencyCards extends Component
 {
@@ -22,18 +23,14 @@ class CurrencyCards extends Component
         $activeCurrencies = $tenant->activeCurrencies();
 
         foreach ($activeCurrencies as $currency) {
-            // Calculate total balance from validated operations
-            $income = Operation::validated()
-                ->where('currency_id', $currency->id)
-                ->where('type', Operation::TYPE_INCOME)
-                ->sum('original_amount');
-
-            $expense = Operation::validated()
-                ->where('currency_id', $currency->id)
-                ->where('type', Operation::TYPE_EXPENSE)
-                ->sum('original_amount');
+            // Calculate total balance from all cashboxes using AccountingService
+            // This properly handles INCOME, EXPENSE, and EXCHANGE (transfers) operations
+            $accountingService = app(AccountingService::class);
+            $totalBalance = 0;
             
-            $totalBalance = $income - $expense;
+            foreach ($tenant->cashboxes as $cashbox) {
+                $totalBalance += $accountingService->getBalance($cashbox, $currency);
+            }
 
             // Calculate trend (last 30 days vs previous 30 days)
             $currentPeriodIncome = Operation::income()

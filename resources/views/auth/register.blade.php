@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Compta+ C+ - Inscription</title>
+    <title>Compta+  Inscription</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -36,7 +36,7 @@
                     <div class="relative z-10">
                         <div class="flex items-center gap-3 mb-8">
                             <div class="bg-white text-blue-600 font-bold text-xl px-4 py-2 rounded-xl tracking-tight shadow-lg">C+</div>
-                            <div class="text-xl font-bold">Compta+ C+</div>
+                            <div class="text-xl font-bold">Compta+ </div>
                         </div>
                         <h1 class="text-3xl lg:text-4xl font-bold tracking-tight mb-3">Commencez gratuitement</h1>
                         <p class="text-blue-100 text-base">7 jours d'essai. Sans carte bancaire.</p>

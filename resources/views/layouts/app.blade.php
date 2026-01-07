@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Compta+ C+') }} - @yield('title', 'Gestion de Trésorerie')</title>
+    <title>{{ config('app.name', 'Compta+') }} - @yield('title', 'Gestion de Trésorerie')</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -33,7 +33,7 @@
                         <!-- Logo -->
                         <div class="flex items-center gap-3">
                             <div class="bg-blue-600 text-white font-bold text-base px-3 py-1.5 rounded-lg tracking-tight">C+</div>
-                            <div class="font-semibold tracking-tight dark:text-white hidden sm:block">Compta+ C+</div>
+                            <div class="font-semibold tracking-tight dark:text-white hidden sm:block">Compta+ </div>
                         </div>
 
                         <!-- Top Header Actions -->
@@ -144,6 +144,7 @@
                                 </button>
                                 <div x-show="open" @click.away="open = false" class="absolute top-10 right-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg py-2 w-56 z-[60]">
                                     <a href="{{ route('settings.features') }}" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">Fonctionnalités</a>
+                                    <a href="{{ route('settings.users') }}" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">Utilisateurs</a>
                                     <a href="{{ route('accounts.index') }}" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">Comptes</a>
                                     <a href="{{ route('settings.cashboxes') }}" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">Caisses</a>
                                     <a href="{{ route('settings.currency') }}" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">Devise & Taux</a>

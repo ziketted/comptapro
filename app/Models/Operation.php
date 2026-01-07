@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BelongsToTenant;
 use App\Models\Account;
+use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Validation\ValidationException;
@@ -11,6 +12,11 @@ use Illuminate\Validation\ValidationException;
 class Operation extends Model
 {
     use BelongsToTenant;
+
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class);
+    }
 
     const TYPE_INCOME = 'INCOME';
     const TYPE_EXPENSE = 'EXPENSE';

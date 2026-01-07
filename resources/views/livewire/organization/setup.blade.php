@@ -1,220 +1,316 @@
-<div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+<div class="min-h-screen bg-white text-black flex items-center justify-center font-sans">
     
-    <!-- Loading Overlay - Fixed Position (Outside relative container) -->
-    <div wire:loading wire:target="submitForm, setupOrganization" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-slate-900/90 backdrop-blur-sm">
-        <div class="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-blue-500 mb-6"></div>
-        <h3 class="text-2xl font-bold text-white">Création de votre organisation...</h3>
-        <p class="text-blue-200 text-base mt-2">Veuillez patienter quelques instants</p>
-    </div>
-
-    <div class="w-full max-w-2xl relative">
-        <!-- Main Card - Compact -->
-        <div class="bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 rounded-3xl p-6 shadow-2xl" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);">
-            
-            <!-- Header with Logo - Compact -->
-            <div class="text-center mb-6">
-                <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-5 py-2 rounded-2xl mb-4">
-                    <div class="bg-blue-500 text-white font-bold text-lg px-3 py-1.5 rounded-lg">C+</div>
-                    <div class="text-xl font-bold text-white">Compta+ C+</div>
-                </div>
-                
-                <h1 class="text-xl font-bold text-white mb-1">Configuration de votre organisation</h1>
-                <p class="text-blue-100 text-sm">Étape {{ $currentStep }} sur {{ $totalSteps }}</p>
-            </div>
-
-            <!-- Progress Steps - Compact -->
-            <div class="mb-6">
-                <div class="flex items-center justify-center gap-3">
-                    @for ($i = 1; $i <= $totalSteps; $i++)
-                        <div class="flex flex-col items-center">
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 mb-1.5
-                                {{ $currentStep >= $i ? 'bg-blue-500 text-white shadow-lg' : 'bg-blue-900/50 text-blue-300' }}">
-                                {{ $i }}
-                            </div>
-                            <span class="text-[10px] uppercase tracking-wider {{ $currentStep >= $i ? 'text-white font-medium' : 'text-blue-300' }}">
-                                @if($i == 1) Nom
-                                @elseif($i == 2) Type
-                                @elseif($i == 3) Taux
-                                @else Valid.
-                                @endif
-                            </span>
-                        </div>
-                        @if($i < $totalSteps)
-                            <div class="w-12 h-0.5 mb-5 transition-all duration-300 {{ $currentStep > $i ? 'bg-blue-400' : 'bg-blue-900/50' }}"></div>
-                        @endif
-                    @endfor
-                </div>
-            </div>
-
-            <!-- Form Container - Compact -->
-            <div class="bg-blue-900/30 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20">
-                <!-- Error/Success Messages -->
-                @if (session()->has('error'))
-                    <div class="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-sm">
-                        {{ session('error') }}
-                    </div>
-                @endif
-
-                <form wire:submit="submitForm">
-                    
-                    <!-- Step 1: Organization Name -->
-                    @if($currentStep == 1)
-                        <div class="space-y-4">
-                            <div class="text-center mb-4">
-                                <h2 class="text-lg font-bold text-white mb-1">Nom de l'organisation</h2>
-                                <p class="text-sm text-blue-200">Comment s'appelle votre structure ?</p>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-blue-100 mb-1.5">Nom de l'organisation *</label>
-                                <input wire:model.live="name" type="text" placeholder="Ex: Ma Société SARL" autofocus
-                                    class="w-full px-4 py-2.5 bg-blue-950/50 border border-blue-500/30 rounded-xl text-sm text-white placeholder-blue-300/50 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all">
-                                @error('name') <span class="text-red-300 text-xs mt-1 block">{{ $message }}</span> @enderror
-                            </div>
-                        </div>
-                    @endif
-
-                    <!-- Step 2: Business Type -->
-                    @if($currentStep == 2)
-                        <div class="space-y-4">
-                            <div class="text-center mb-4">
-                                <h2 class="text-lg font-bold text-white mb-1">Type d'activité</h2>
-                                <p class="text-sm text-blue-200">Quel est votre secteur d'activité ?</p>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-blue-100 mb-1.5">Type d'activité *</label>
-                                <select wire:model.live="business_type" 
-                                    class="w-full px-4 py-2.5 bg-blue-950/50 border border-blue-500/30 rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all">
-                                    <option value="">Sélectionnez un type d'activité</option>
-                                    <option value="Commerce">Commerce</option>
-                                    <option value="Boutique">Boutique</option>
-                                    <option value="Hôpital">Hôpital</option>
-                                    <option value="École">École</option>
-                                    <option value="Magasin">Magasin</option>
-                                    <option value="Bar">Bar</option>
-                                    <option value="Restaurant">Restaurant</option>
-                                    <option value="Véhicule">Véhicule</option>
-                                    <option value="Entreprise">Entreprise</option>
-                                    <option value="Pharmacie">Pharmacie</option>
-                                    <option value="Salon de coiffure">Salon de coiffure</option>
-                                    <option value="Garage / Mécanique">Garage / Mécanique</option>
-                                    <option value="Supermarché">Supermarché</option>
-                                    <option value="Hôtel">Hôtel</option>
-                                    <option value="Bureau administratif">Bureau administratif</option>
-                                    <option value="Eglise">Eglise</option>
-                                    <option value="Autres">Autres (précisez)</option>
-                                </select>
-                                @error('business_type') <span class="text-red-300 text-xs mt-1 block">{{ $message }}</span> @enderror
-                            </div>
-
-                            @if($business_type === 'Autres')
-                                <div>
-                                    <label class="block text-sm font-medium text-blue-100 mb-1.5">Précisez votre activité *</label>
-                                    <input wire:model.live="business_type_other" type="text" placeholder="Ex: Agence de voyage, Studio photo..." 
-                                        class="w-full px-4 py-2.5 bg-blue-950/50 border border-blue-500/30 rounded-xl text-sm text-white placeholder-blue-300/50 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all">
-                                    @error('business_type_other') <span class="text-red-300 text-xs mt-1 block">{{ $message }}</span> @enderror
-                                </div>
-                            @endif
-                        </div>
-                    @endif
-
-                    <!-- Step 3: Exchange Rates -->
-                    @if($currentStep == 3)
-                        <div class="space-y-4">
-                            <div class="text-center mb-4">
-                                <h2 class="text-lg font-bold text-white mb-1">Taux de Change</h2>
-                                <p class="text-sm text-blue-200">Configuration du taux du jour</p>
-                            </div>
-
-                            <div class="flex justify-center">
-                                <div class="w-full max-w-xs">
-                                    <label class="block text-sm font-medium text-blue-100 mb-1.5 text-center">1 USD = ??? CDF</label>
-                                    <div class="relative">
-                                        <input wire:model.live="usd_to_cdf" type="number" step="0.01" placeholder="Ex: 2850"
-                                            class="w-full px-4 py-3 bg-blue-950/50 border border-blue-500/30 rounded-xl text-lg text-white text-center focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all">
-                                        <div class="absolute right-3 top-1/2 -translate-y-1/2 text-blue-300 text-sm font-medium">CDF</div>
-                                    </div>
-                                    @error('usd_to_cdf') <span class="text-red-300 text-xs mt-1 block text-center">{{ $message }}</span> @enderror
-                                    <p class="text-xs text-blue-300/70 text-center mt-2">Entrez le taux de change actuel pour 1 Dollar</p>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                    <!-- Step 4: Validation -->
-                    @if($currentStep == 4)
-                        <div class="space-y-4">
-                            <div class="text-center mb-4">
-                                <h2 class="text-lg font-bold text-white mb-1">Validation</h2>
-                                <p class="text-sm text-blue-200">Vérifiez et confirmez la création</p>
-                            </div>
-
-                            <div class="bg-blue-950/50 rounded-xl p-4 space-y-3 border border-blue-500/30">
-                                <div class="flex justify-between items-center border-b border-blue-500/20 pb-2">
-                                    <span class="text-blue-200 text-sm">Organisation</span>
-                                    <span class="text-white font-medium">{{ $name }}</span>
-                                </div>
-                                <div class="flex justify-between items-center border-b border-blue-500/20 pb-2">
-                                    <span class="text-blue-200 text-sm">Activité</span>
-                                    <span class="text-white font-medium">{{ $business_type === 'Autres' ? $business_type_other : $business_type }}</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-blue-200 text-sm">Taux (USD → CDF)</span>
-                                    <span class="text-white font-medium">{{ number_format((float)$usd_to_cdf, 0, ',', ' ') }} CDF</span>
-                                </div>
-                            </div>
-
-                            <div class="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl">
-                                <p class="text-sm text-blue-100 font-medium mb-1.5 text-center">Configuration automatique incluse :</p>
-                                <ul class="list-disc list-inside space-y-0.5 text-sm text-blue-200 text-center">
-                                    <li>Caisses USD, EUR, CDF</li>
-                                    <li>Période d'essai de 7 jours</li>
-                                    <li>Rôle Manager</li>
-                                </ul>
-                            </div>
-                        </div>
-                    @endif
-
-                    <!-- Navigation Buttons -->
-                    <div class="flex items-center gap-3 mt-6">
-                        @if($currentStep > 1)
-                            <button type="button" wire:click="previousStep" 
-                                class="flex-1 bg-blue-800/50 hover:bg-blue-800 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 border border-blue-500/30">
-                                Précédent
-                            </button>
-                        @endif
-
-                        @php
-                            $isDisabled = false;
-                            if ($currentStep == 1 && empty($name)) $isDisabled = true;
-                            if ($currentStep == 2 && (empty($business_type) || ($business_type == 'Autres' && empty($business_type_other)))) $isDisabled = true;
-                            if ($currentStep == 3 && empty($usd_to_cdf)) $isDisabled = true;
-                        @endphp
-
-                        <button type="submit" 
-                            @if($isDisabled) disabled @endif
-                            class="flex-1 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 shadow-lg flex items-center justify-center gap-2
-                            {{ $isDisabled 
-                                ? 'bg-slate-700 text-slate-400 cursor-not-allowed shadow-none' 
-                                : 'bg-blue-500 hover:bg-blue-600 text-white hover:shadow-xl' }}">
-                            @if($currentStep == $totalSteps)
-                                <span>Créer mon organisation</span>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M5 12h14"></path>
-                                    <path d="M12 5l7 7-7 7"></path>
-                                </svg>
-                            @else
-                                <span>Suivant</span>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M5 12h14"></path>
-                                    <path d="M12 5l7 7-7 7"></path>
-                                </svg>
-                            @endif
-                        </button>
-                    </div>
-                </form>
-            </div>
+    <!-- Loading Overlay -->
+    <div wire:loading wire:target="setupOrganization" class="fixed inset-0 z-50 bg-white/90 backdrop-blur-sm">
+        <div class="h-full w-full flex flex-col items-center justify-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-black mb-4"></div>
+            <p class="text-sm text-gray-600 font-medium">Finalisation...</p>
         </div>
     </div>
+
+    <div class="w-full max-w-lg p-6" id="wizard-container">
+        
+        <!-- Progress Indicator -->
+        <div class="mb-10 flex items-center justify-between text-xs font-medium text-gray-400">
+            <span id="progress-text">Étape 1 sur 4</span>
+            <span id="step-name" class="text-black">Nom de l'organisation</span>
+        </div>
+
+        <!-- Form -->
+        <form wire:submit.prevent="setupOrganization" id="wizard-form">
+
+            <!-- Step 1: Nom -->
+            <section class="step" data-step="1">
+                <div class="mb-6 flex justify-center">
+                    <div class="p-3 bg-gray-50 rounded-full">
+                        <!-- Icon: Building -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                            <path d="M9 22v-4h6v4"></path>
+                            <path d="M8 6h.01"></path>
+                            <path d="M16 6h.01"></path>
+                            <path d="M8 10h.01"></path>
+                            <path d="M16 10h.01"></path>
+                            <path d="M8 14h.01"></path>
+                            <path d="M16 14h.01"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <h1 class="text-2xl font-bold text-center mb-2">Quel est le nom de votre structure ?</h1>
+                <p class="text-gray-500 text-center mb-8 text-sm">Ce nom sera affiché sur vos factures et rapports.</p>
+
+                <div class="space-y-4">
+                    <input type="text" 
+                        wire:model="name"
+                        id="input-name"
+                        placeholder="Ex: Ma Société SARL" 
+                        class="w-full text-lg px-0 py-3 bg-transparent border-b-2 border-gray-200 focus:border-black focus:outline-none focus:ring-0 transition-colors placeholder-gray-300 text-center"
+                        autofocus
+                    >
+                    @error('name') <p class="text-red-500 text-xs text-center">{{ $message }}</p> @enderror
+                </div>
+            </section>
+
+            <!-- Step 2: Type -->
+            <section class="step hidden" data-step="2">
+                <div class="mb-6 flex justify-center">
+                    <div class="p-3 bg-gray-50 rounded-full">
+                         <!-- Icon: Tag -->
+                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"></path>
+                            <circle cx="7" cy="7" r=".5"></circle>
+                        </svg>
+                    </div>
+                </div>
+
+                <h1 class="text-2xl font-bold text-center mb-2">Quel est votre secteur d'activité ?</h1>
+                <p class="text-gray-500 text-center mb-8 text-sm">Cela nous permet de personnaliser votre expérience.</p>
+
+                <div class="space-y-6">
+                    <select wire:model="business_type" id="input-type" class="w-full text-lg px-4 py-3 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-black focus:outline-none text-center appearance-none cursor-pointer">
+                        <option value="">Sélectionner une activité</option>
+                        <option value="Commerce">Commerce</option>
+                        <option value="Boutique">Boutique</option>
+                        <option value="Hôpital">Hôpital</option>
+                        <option value="École">École</option>
+                        <option value="Magasin">Magasin</option>
+                        <option value="Restaurant">Restaurant</option>
+                        <option value="Pharmacie">Pharmacie</option>
+                        <option value="Entreprise">Entreprise</option>
+                        <option value="Autres">Autres</option>
+                    </select>
+                    @error('business_type') <p class="text-red-500 text-xs text-center">{{ $message }}</p> @enderror
+
+                    <div id="other-type-container" class="{{ $business_type === 'Autres' ? 'block' : 'hidden' }}">
+                        <input type="text" 
+                            wire:model="business_type_other"
+                            id="input-type-other"
+                            placeholder="Précisez votre activité" 
+                            class="w-full text-lg px-0 py-3 bg-transparent border-b-2 border-gray-200 focus:border-black focus:outline-none focus:ring-0 transition-colors placeholder-gray-300 text-center"
+                        >
+                        @error('business_type_other') <p class="text-red-500 text-xs text-center">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 3: Taux -->
+            <section class="step hidden" data-step="3">
+                <div class="mb-6 flex justify-center">
+                    <div class="p-3 bg-gray-50 rounded-full">
+                        <!-- Icon: Percent -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="19" y1="5" x2="5" y2="19"></line>
+                            <circle cx="6.5" cy="6.5" r="2.5"></circle>
+                            <circle cx="17.5" cy="17.5" r="2.5"></circle>
+                        </svg>
+                    </div>
+                </div>
+
+                <h1 class="text-2xl font-bold text-center mb-2">Taux du jour</h1>
+                <p class="text-gray-500 text-center mb-8 text-sm">Définissez la valeur de 1 USD en CDF.</p>
+
+                <div class="flex flex-col items-center">
+                    <div class="flex items-baseline justify-center gap-3">
+                         <span class="text-xl text-gray-400 font-medium">1 USD =</span>
+                        <input type="number" 
+                            wire:model="usd_to_cdf"
+                            id="input-rate"
+                            step="0.01"
+                            placeholder="2850" 
+                            class="w-32 text-4xl font-bold px-0 py-2 bg-transparent border-b-2 border-gray-200 focus:border-black focus:outline-none focus:ring-0 text-center transition-colors placeholder-gray-200"
+                        >
+                        <span class="text-xl text-black font-bold">CDF</span>
+                    </div>
+                     @error('usd_to_cdf') <p class="text-red-500 text-xs text-center mt-2">{{ $message }}</p> @enderror
+                </div>
+            </section>
+
+             <!-- Step 4: Validation -->
+             <section class="step hidden" data-step="4">
+                <div class="mb-6 flex justify-center">
+                    <div class="p-3 bg-black rounded-full text-white">
+                        <!-- Icon: Check -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </div>
+                </div>
+
+                <h1 class="text-2xl font-bold text-center mb-2">Tout est prêt !</h1>
+                <p class="text-gray-500 text-center mb-8 text-sm">Vérifiez vos informations avant de commencer.</p>
+
+                <div class="bg-gray-50 rounded-xl p-6 space-y-4 text-sm max-w-sm mx-auto mb-8">
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Nom</span>
+                        <span class="font-semibold" x-text="$wire.name"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Activité</span>
+                        <span class="font-semibold" x-text="$wire.business_type === 'Autres' ? $wire.business_type_other : $wire.business_type"></span>
+                    </div>
+                     <div class="flex justify-between">
+                        <span class="text-gray-500">Taux Initial</span>
+                        <span class="font-semibold">1 USD = <span x-text="$wire.usd_to_cdf"></span> CDF</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Navigation Actions -->
+            <div class="mt-10 flex flex-col gap-3">
+                
+                <button type="button" 
+                    id="btn-next" 
+                    class="w-full bg-black hover:bg-gray-800 text-white font-semibold py-3.5 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                    <span>Suivant</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </button>
+
+                 <button type="submit" 
+                    id="btn-submit" 
+                    class="hidden w-full bg-black hover:bg-gray-800 text-white font-semibold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2"
+                >
+                    <span>Valider et terminer</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </button>
+
+                <button type="button" 
+                    id="btn-prev" 
+                    class="hidden w-full text-gray-400 hover:text-black font-medium py-2 transition-colors text-sm"
+                >
+                    Retour
+                </button>
+
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Minimalist Vanilla JS Logic -->
+    <script>
+        document.addEventListener('livewire:initialized', () => {
+            let currentStep = 1;
+            const totalSteps = 4;
+            
+            // DOM Elements
+            const steps = document.querySelectorAll('.step');
+            const btnNext = document.getElementById('btn-next');
+            const btnPrev = document.getElementById('btn-prev');
+            const btnSubmit = document.getElementById('btn-submit');
+            const progressText = document.getElementById('progress-text');
+            const stepNameLabel = document.getElementById('step-name');
+
+            // Inputs
+            const inputName = document.getElementById('input-name');
+            const inputType = document.getElementById('input-type');
+            const inputTypeOther = document.getElementById('input-type-other');
+            const inputRate = document.getElementById('input-rate');
+            const otherTypeContainer = document.getElementById('other-type-container');
+
+            // Step Titles
+            const stepTitles = {
+                1: 'Nom de l\'organisation',
+                2: 'Type d\'activité',
+                3: 'Taux de change',
+                4: 'Vérification'
+            };
+
+            // Initial State Check
+            validateStep();
+
+            // Event Listeners
+            btnNext.addEventListener('click', () => changeStep(1));
+            btnPrev.addEventListener('click', () => changeStep(-1));
+
+            // Input Listeners for Validation
+            [inputName, inputType, inputTypeOther, inputRate].forEach(input => {
+                input.addEventListener('input', validateStep);
+                input.addEventListener('change', validateStep); // For select
+            });
+
+            // Handle "Other" type visibility
+            inputType.addEventListener('change', function() {
+                if (this.value === 'Autres') {
+                    otherTypeContainer.classList.remove('hidden');
+                } else {
+                    otherTypeContainer.classList.add('hidden');
+                }
+                validateStep();
+            });
+
+            function changeStep(direction) {
+                const newStep = currentStep + direction;
+                
+                if (newStep >= 1 && newStep <= totalSteps) {
+                    // Hide current
+                    document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('hidden');
+                    
+                    // Show new
+                    currentStep = newStep;
+                    const nextStepEl = document.querySelector(`.step[data-step="${currentStep}"]`);
+                    nextStepEl.classList.remove('hidden');
+
+                    // Update UI
+                    updateUI();
+                    validateStep();
+
+                    // Focus Logic
+                    if (currentStep === 1) setTimeout(() => inputName.focus(), 100);
+                    if (currentStep === 3) setTimeout(() => inputRate.focus(), 100);
+                }
+            }
+
+            function updateUI() {
+                // Progress
+                progressText.innerText = `Étape ${currentStep} sur ${totalSteps}`;
+                stepNameLabel.innerText = stepTitles[currentStep];
+
+                // Buttons visibility
+                if (currentStep === 1) {
+                    btnPrev.classList.add('hidden');
+                } else {
+                    btnPrev.classList.remove('hidden');
+                }
+
+                if (currentStep === totalSteps) {
+                    btnNext.classList.add('hidden');
+                    btnSubmit.classList.remove('hidden');
+                } else {
+                    btnNext.classList.remove('hidden');
+                    btnSubmit.classList.add('hidden');
+                }
+            }
+
+            function validateStep() {
+                let isValid = false;
+
+                switch(currentStep) {
+                    case 1:
+                        isValid = inputName.value.trim().length > 0;
+                        break;
+                    case 2:
+                        if (inputType.value === 'Autres') {
+                            isValid = inputTypeOther.value.trim().length > 0;
+                        } else {
+                            isValid = inputType.value !== '';
+                        }
+                        break;
+                    case 3:
+                        isValid = inputRate.value > 0;
+                        break;
+                    case 4:
+                        isValid = true;
+                        break;
+                }
+
+                btnNext.disabled = !isValid;
+                
+                // Add Enter key listener for convenience
+                if (isValid) {
+                     // Note: We avoid auto-submission on Enter to prevent accidental skips
+                }
+            }
+        });
+    </script>
 </div>

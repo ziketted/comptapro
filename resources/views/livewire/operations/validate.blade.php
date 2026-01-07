@@ -83,17 +83,78 @@
                                 <td class="px-4 py-3 text-sm dark:text-slate-300">{{ $op->creator?->name ?? 'N/A' }}</td>
                                 <td class="px-4 py-3 text-center">
                                     <div class="flex items-center justify-center gap-2">
-                                        <button wire:click="validateOperation({{ $op->id }})" 
+                                        <a href="{{ route('operations.edit', $op->id) }}" 
+                                           class="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-1.5">
+                                            <span class="iconify" data-icon="lucide:edit" style="width: 14px; height: 14px;"></span>
+                                            Modifier
+                                        </a>
+                                        <button @click="$dispatch('open-modal', 'validate-{{ $op->id }}')"
                                                 class="px-3 py-1.5 bg-emerald-600 text-white text-xs font-medium rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-1.5">
                                             <span class="iconify" data-icon="lucide:check" style="width: 14px; height: 14px;"></span>
                                             Valider
                                         </button>
-                                        <button wire:click="rejectOperation({{ $op->id }})" 
+                                        <button @click="$dispatch('open-modal', 'reject-{{ $op->id }}')"
                                                 class="px-3 py-1.5 bg-red-600 text-white text-xs font-medium rounded-lg hover:bg-red-700 transition-colors flex items-center gap-1.5">
                                             <span class="iconify" data-icon="lucide:x" style="width: 14px; height: 14px;"></span>
                                             Rejeter
                                         </button>
                                     </div>
+
+                                    <!-- Validation Modal -->
+                                    <x-modal name="validate-{{ $op->id }}" maxWidth="md">
+                                        <div class="p-6">
+                                            <div class="flex items-start gap-4">
+                                                <div class="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center flex-shrink-0">
+                                                    <span class="iconify text-emerald-600 dark:text-emerald-400" data-icon="lucide:check-circle" style="width: 24px; height: 24px;"></span>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">Valider cette opération ?</h3>
+                                                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                                                        Cette action est irréversible. L'opération sera définitivement validée et ne pourra plus être modifiée.
+                                                    </p>
+                                                    <div class="flex items-center justify-end gap-3 mt-6">
+                                                        <button @click="$dispatch('close-modal', 'validate-{{ $op->id }}')"
+                                                                class="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
+                                                            Annuler
+                                                        </button>
+                                                        <button wire:click="validateOperation({{ $op->id }})"
+                                                                @click="$dispatch('close-modal', 'validate-{{ $op->id }}')"
+                                                                class="px-4 py-2 text-sm font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors">
+                                                            Confirmer la validation
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </x-modal>
+
+                                    <!-- Rejection Modal -->
+                                    <x-modal name="reject-{{ $op->id }}" maxWidth="md">
+                                        <div class="p-6">
+                                            <div class="flex items-start gap-4">
+                                                <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0">
+                                                    <span class="iconify text-red-600 dark:text-red-400" data-icon="lucide:x-circle" style="width: 24px; height: 24px;"></span>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">Rejeter cette opération ?</h3>
+                                                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                                                        L'opération sera marquée comme rejetée et retirée de la liste des validations.
+                                                    </p>
+                                                    <div class="flex items-center justify-end gap-3 mt-6">
+                                                        <button @click="$dispatch('close-modal', 'reject-{{ $op->id }}')"
+                                                                class="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
+                                                            Annuler
+                                                        </button>
+                                                        <button wire:click="rejectOperation({{ $op->id }})"
+                                                                @click="$dispatch('close-modal', 'reject-{{ $op->id }}')"
+                                                                class="px-4 py-2 text-sm font-medium bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                                                            Confirmer le rejet
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </x-modal>
                                 </td>
                             </tr>
                         @endforeach

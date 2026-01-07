@@ -74,11 +74,35 @@
     </div>
 
     <!-- Totals Summary -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-1 gap-4 mb-6">
         @foreach($totals as $total)
-        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 shadow-sm">
-            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium uppercase">Total {{ $total['currency'] }}</p>
-            <p class="text-xl font-bold text-slate-900 dark:text-white mt-1">{{ number_format($total['amount'], 2) }} <span class="text-sm font-normal text-slate-500">{{ $total['currency'] }}</span></p>
+        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300">Résumé {{ $total['currency'] }}</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Income -->
+                <div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium uppercase mb-1">Recettes</p>
+                    <p class="text-lg font-bold text-emerald-600 dark:text-emerald-400">
+                        +{{ number_format($total['income'], 2) }} <span class="text-sm font-normal text-slate-500">{{ $total['currency'] }}</span>
+                    </p>
+                </div>
+                <!-- Expense -->
+                <div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium uppercase mb-1">Dépenses</p>
+                    <p class="text-lg font-bold text-red-600 dark:text-red-400">
+                        -{{ number_format($total['expense'], 2) }} <span class="text-sm font-normal text-slate-500">{{ $total['currency'] }}</span>
+                    </p>
+                </div>
+                <!-- Balance -->
+                <div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium uppercase mb-1">Solde Net</p>
+                    <p class="text-lg font-bold {{ $total['balance'] >= 0 ? 'text-blue-600 dark:text-blue-400' : 'text-red-600 dark:text-red-400' }}">
+                        {{ $total['balance'] >= 0 ? '+' : '' }}{{ number_format($total['balance'], 2) }} <span class="text-sm font-normal text-slate-500">{{ $total['currency'] }}</span>
+                    </p>
+                </div>
+            </div>
         </div>
         @endforeach
     </div>
@@ -170,9 +194,20 @@
     </div>
 
     <!-- Pagination -->
-    <div class="mt-4">
-        {{ $operations->links() }}
+    @if($operations->hasPages())
+    <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 mt-6">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-sm text-slate-600 dark:text-slate-400">
+                Affichage de <span class="font-semibold text-slate-900 dark:text-white">{{ $operations->firstItem() }}</span> 
+                à <span class="font-semibold text-slate-900 dark:text-white">{{ $operations->lastItem() }}</span> 
+                sur <span class="font-semibold text-slate-900 dark:text-white">{{ $operations->total() }}</span> opérations
+            </div>
+            <div>
+                {{ $operations->links() }}
+            </div>
+        </div>
     </div>
+    @endif
 </div>
 
 <script>

@@ -57,17 +57,36 @@ class ReportService
         }
 
         // Clone for totals calculation (before sorting/pagination)
+        // Calculate totals separately for INCOME and EXPENSE per currency
         $totalsQuery = clone $query;
-        $totals = $totalsQuery->select('currency_id', DB::raw('SUM(original_amount) as total_amount'))
-            ->groupBy('currency_id')
-            ->with('currency')
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'amount' => $item->total_amount,
-                    'currency' => $item->currency->code ?? '???'
+        $allOperations = $totalsQuery->get();
+        
+        $totals = [];
+        
+        foreach ($allOperations as $op) {
+            $currencyCode = $op->currency->code ?? '???';
+            
+            if (!isset($totals[$currencyCode])) {
+                $totals[$currencyCode] = [
+                    'currency' => $currencyCode,
+                    'income' => 0,
+                    'expense' => 0,
+                    'balance' => 0,
                 ];
-            });
+            }
+            
+            if ($op->type === Operation::TYPE_INCOME) {
+                $totals[$currencyCode]['income'] += $op->original_amount;
+            } elseif ($op->type === Operation::TYPE_EXPENSE) {
+                $totals[$currencyCode]['expense'] += $op->original_amount;
+            }
+            
+            // Calculate net balance (INCOME - EXPENSE)
+            $totals[$currencyCode]['balance'] = $totals[$currencyCode]['income'] - $totals[$currencyCode]['expense'];
+        }
+        
+        // Convert to collection
+        $totals = collect(array_values($totals));
 
         // Sorting / Grouping
         $groupBy = $filters['group_by'] ?? null;
