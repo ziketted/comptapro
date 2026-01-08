@@ -19,6 +19,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        \Illuminate\Pagination\Paginator::useTailwind();
+
         // Register event listeners
         \Event::listen(
             \Illuminate\Auth\Events\Login::class,

@@ -148,6 +148,8 @@
                                     <a href="{{ route('accounts.index') }}" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">Comptes</a>
                                     <a href="{{ route('settings.cashboxes') }}" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">Caisses</a>
                                     <a href="{{ route('settings.currency') }}" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">Devise & Taux</a>
+                                    <div class="border-t border-slate-100 dark:border-slate-700 my-1"></div>
+                                    <a href="{{ route('subscription.index') }}" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">Ma Licence (Abonnement)</a>
                                 </div>
                             </div>
                             @endif
@@ -156,8 +158,15 @@
                 </div>
             </header>
 
-            <!-- Main Content Area -->
-            <main class="flex-1 overflow-y-auto">
+        <!-- Subscription Warning Banner -->
+        @auth
+            @if(auth()->user()->tenant)
+                <x-subscription-banner :tenant="auth()->user()->tenant" />
+            @endif
+        @endauth
+
+        <!-- Page Content -->
+        <main class="flex-1 overflow-y-auto">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     @if(session('success'))
                         <div class="mb-6 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-4 flex items-start gap-3">

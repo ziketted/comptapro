@@ -103,7 +103,7 @@ class ReportService
               ->orderBy('operations.created_at', 'desc');
 
         if ($paginate) {
-            $operations = $query->paginate(50)->withQueryString();
+            $operations = $query->paginate(15)->withQueryString();
         } else {
             $operations = $query->get();
         }

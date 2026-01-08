@@ -13,6 +13,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'manager' => \App\Http\Middleware\EnsureUserIsManager::class,
+            'superadmin' => \App\Http\Middleware\EnsureUserIsSuperAdmin::class,
+            'check.subscription' => \App\Http\Middleware\CheckSubscription::class,
         ]);
         $middleware->append(\App\Http\Middleware\TenantMiddleware::class);
     })

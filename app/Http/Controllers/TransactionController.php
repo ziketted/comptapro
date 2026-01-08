@@ -68,23 +68,23 @@ class TransactionController extends Controller
         ]);
 
         $account = Account::findOrFail($validated['account_id']);
-        $organization = auth()->user()->organization;
+        $tenant = auth()->user()->tenant;
 
         // Calculate exchange rate and base currency amount
         $exchangeRate = 1;
         $amountInBaseCurrency = $validated['amount'];
 
-        if ($validated['currency'] !== $organization->default_currency) {
+        if ($validated['currency'] !== $tenant->default_currency) {
             $exchangeRate = ExchangeRate::getRate(
                 $validated['currency'],
-                $organization->default_currency,
+                $tenant->default_currency,
                 $validated['transaction_date']
             );
             $amountInBaseCurrency = $validated['amount'] * $exchangeRate;
         }
 
         $transaction = Transaction::create([
-            'organization_id' => auth()->user()->organization_id,
+            'tenant_id' => auth()->user()->tenant_id,
             'user_id' => auth()->id(),
             'account_id' => $validated['account_id'],
             'beneficiary_id' => $validated['beneficiary_id'],
@@ -144,16 +144,16 @@ class TransactionController extends Controller
             'transaction_date' => 'required|date',
         ]);
 
-        $organization = auth()->user()->organization;
+        $tenant = auth()->user()->tenant;
 
         // Recalculate exchange rate and base currency amount
         $exchangeRate = 1;
         $amountInBaseCurrency = $validated['amount'];
 
-        if ($validated['currency'] !== $organization->default_currency) {
+        if ($validated['currency'] !== $tenant->default_currency) {
             $exchangeRate = ExchangeRate::getRate(
                 $validated['currency'],
-                $organization->default_currency,
+                $tenant->default_currency,
                 $validated['transaction_date']
             );
             $amountInBaseCurrency = $validated['amount'] * $exchangeRate;

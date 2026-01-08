@@ -17,13 +17,13 @@ class RecordLoginActivity
             // Refresh user to get latest data
             $user = $event->user->fresh();
             
-            // Only log if user has an organization
-            if (!$user || !$user->organization_id) {
+            // Only log if user has a tenant
+            if (!$user || !$user->tenant_id) {
                 return;
             }
 
             AccessLog::create([
-                'organization_id' => $user->organization_id,
+                'tenant_id' => $user->tenant_id,
                 'user_id' => $user->id,
                 'action' => 'login',
                 'ip_address' => Request::ip(),

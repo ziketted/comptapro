@@ -33,8 +33,13 @@ class GoogleAuthController extends Controller
                 // User exists, just login
                 Auth::login($user);
                 
+                // Redirect SuperAdmin
+                if ($user->role === 'superadmin') {
+                    return redirect()->route('superadmin.dashboard');
+                }
+
                 // Check if user has organization
-                if (!$user->organization_id) {
+                if (!$user->tenant_id) {
                     return redirect()->route('organization.setup');
                 }
                 
@@ -51,6 +56,11 @@ class GoogleAuthController extends Controller
             
             Auth::login($user);
             
+            // Redirect SuperAdmin (unlikely but good practice)
+            if ($user->role === 'superadmin') {
+                return redirect()->route('superadmin.dashboard');
+            }
+
             // Redirect to organization setup
             return redirect()->route('organization.setup');
             

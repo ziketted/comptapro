@@ -17,6 +17,11 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
         
+        // Redirect SuperAdmin to their own dashboard
+        if ($user->role === 'superadmin') {
+            return redirect()->route('superadmin.dashboard');
+        }
+
         // Check if user has tenant
         if (!$user->tenant_id) {
             return redirect()->route('organization.setup')->with('error', 'Veuillez configurer votre organisation.');

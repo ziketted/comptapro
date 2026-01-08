@@ -3,6 +3,7 @@
 namespace App\Livewire\Cashbook;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 use App\Models\Cashbox;
 use App\Models\Currency;
 use App\Models\Operation;
@@ -10,6 +11,8 @@ use App\Services\AccountingService;
 
 class Index extends Component
 {
+    use WithPagination;
+
     public $selectedCashboxId;
     public $balances = [];
 
@@ -25,6 +28,7 @@ class Index extends Component
 
     public function updatedSelectedCashboxId()
     {
+        $this->resetPage();
         $this->loadBalances();
     }
 
@@ -62,7 +66,7 @@ class Index extends Component
 
         return view('livewire.cashbook.index', [
             'cashboxes' => auth()->user()->tenant->cashboxes,
-            'operations' => $query->limit(50)->get(),
+            'operations' => $query->paginate(20),
         ])->layout('layouts.app');
     }
 }

@@ -95,5 +95,9 @@
                 </tbody>
             </table>
         </div>
+        
+        <div class="px-8 py-4 bg-slate-50/50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700">
+            {{ $operations->links() }}
+        </div>
     </div>
 </div>

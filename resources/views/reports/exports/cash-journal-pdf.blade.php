@@ -55,5 +55,31 @@
             @endforeach
         </tbody>
     </table>
+
+    <div style="margin-top: 30px;">
+        <h3 style="border-bottom: 2px solid #333; padding-bottom: 5px; font-size: 12px; text-transform: uppercase;">Résumé des Soldes</h3>
+        @foreach($totals as $total)
+        <div style="margin-bottom: 15px; border: 1px solid #eee; padding: 10px; background-color: #fcfcfc;">
+            <table style="margin-top: 0; border: none;">
+                <tr style="border: none;">
+                    <td style="border: none; width: 33%;">
+                        <div style="color: #666; font-size: 8px; text-transform: uppercase; margin-bottom: 3px;">Total Recettes</div>
+                        <div style="font-size: 12px; font-weight: bold; color: green;">+{{ number_format($total['income'], 2) }} {{ $total['currency'] }}</div>
+                    </td>
+                    <td style="border: none; width: 33%;">
+                        <div style="color: #666; font-size: 8px; text-transform: uppercase; margin-bottom: 3px;">Total Dépenses</div>
+                        <div style="font-size: 12px; font-weight: bold; color: red;">-{{ number_format($total['expense'], 2) }} {{ $total['currency'] }}</div>
+                    </td>
+                    <td style="border: none; width: 34%;">
+                        <div style="color: #666; font-size: 8px; text-transform: uppercase; margin-bottom: 3px;">Solde Net</div>
+                        <div style="font-size: 12px; font-weight: bold; color: {{ $total['balance'] >= 0 ? '#0000ff' : '#ff0000' }};">
+                            {{ $total['balance'] >= 0 ? '+' : '' }}{{ number_format($total['balance'], 2) }} {{ $total['currency'] }}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        @endforeach
+    </div>
 </body>
 </html>

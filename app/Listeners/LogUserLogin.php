@@ -29,14 +29,14 @@ class LogUserLogin
                 'last_login_ip' => $this->request->ip()
             ]);
 
-            // Only create access log if user has an organization
-            if (!$user || !$user->organization_id) {
+            // Only create access log if user has a tenant
+            if (!$user || !$user->tenant_id) {
                 return;
             }
 
             // Create access log entry
             AccessLog::create([
-                'organization_id' => $user->organization_id,
+                'tenant_id' => $user->tenant_id,
                 'user_id' => $user->id,
                 'action' => 'login',
                 'ip_address' => $this->request->ip(),

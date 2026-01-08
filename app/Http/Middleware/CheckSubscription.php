@@ -10,22 +10,33 @@ class CheckSubscription
 {
     /**
      * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = auth()->user();
+        $user = $request->user();
 
-        if (!$user || !$user->organization) {
-            return redirect()->route('login');
+        // 1. SuperAdmin bypass
+        if ($user && $user->role === 'superadmin') {
+            return $next($request);
         }
 
-        $organization = $user->organization;
+        // 2. Exclude subscription routes to avoid infinite loop
+        if ($request->is('subscription*') || $request->is('logout')) {
+            return $next($request);
+        }
 
-        // Check if organization has active subscription or trial
-        if (!$organization->hasActiveSubscription()) {
-            // Redirect to subscription page if not on trial and no active subscription
-            return redirect()->route('subscription.index')
-                ->with('error', 'Votre période d\'essai est terminée. Veuillez souscrire à un abonnement pour continuer.');
+        // 3. Check Tenant Subscription
+        if ($user && $user->tenant) {
+            // Update status first to ensure we have the latest state (handle expiration)
+            $user->tenant->updateStatus(); 
+            
+            if (!$user->tenant->hasActiveSubscription()) {
+                // Determine if it's a trial expiration or license expiration for better UX?
+                // For now, redirect to generic expired page.
+                return redirect()->route('subscription.expired');
+            }
         }
 
         return $next($request);

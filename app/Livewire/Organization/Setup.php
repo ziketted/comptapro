@@ -64,6 +64,11 @@ class Setup extends Component
 
     public function mount()
     {
+        // Redirect if user is superadmin
+        if (auth()->user()->role === 'superadmin') {
+            return redirect()->route('superadmin.dashboard');
+        }
+
         // Redirect if user already has an organization
         if (auth()->user()->tenant_id) {
             return redirect()->route('dashboard');

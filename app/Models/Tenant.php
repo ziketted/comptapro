@@ -11,7 +11,7 @@ class Tenant extends Model
         'name',
         'slug',
         'business_type',
-        'status', // TRIAL, ACTIVE, EXPIRED
+        'status', // TRIAL, ACTIVE, EXPIRED, SUSPENDED
         'email',
         'phone',
         'address',
@@ -131,6 +131,10 @@ class Tenant extends Model
 
     public function hasActiveSubscription(): bool
     {
+        if ($this->status === 'SUSPENDED') {
+            return false;
+        }
+
         if ($this->subscription_active || ($this->on_trial && $this->trial_ends_at && $this->trial_ends_at->isFuture())) {
             return true;
         }
