@@ -171,6 +171,14 @@ class Setup extends Component
                 ]);
             }
 
+            // Create a default cashbox (Essential for Dashboard and Operations)
+            \App\Models\Cashbox::create([
+                'tenant_id' => $tenant->id,
+                'name' => 'Caisse Principale',
+                'description' => 'Caisse par défaut générée à la création',
+                'is_active' => true,
+            ]);
+
             \DB::commit();
 
             // Update user session
