@@ -125,7 +125,6 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('livewire:navigated', () => {
             // Re-init on navigation
