@@ -4,6 +4,7 @@ namespace App\Livewire\Organization;
 
 use App\Models\Tenant;
 use App\Models\User;
+use App\Models\Cashbox;
 use Livewire\Component;
 
 class Setup extends Component
@@ -31,7 +32,7 @@ class Setup extends Component
     {
         if ($this->currentStep == 1) {
             return [
-                'name' => 'required|string|max:255',
+                'name' => 'required|string|min:2|max:255',
             ];
         } elseif ($this->currentStep == 2) {
             return [
@@ -49,7 +50,7 @@ class Setup extends Component
 
     public function nextStep()
     {
-        $this->validate();
+        $this->validate($this->rules());
         if ($this->currentStep < $this->totalSteps) {
             $this->currentStep++;
         }
@@ -87,7 +88,7 @@ class Setup extends Component
     protected function getAllRules()
     {
         return [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|min:2|max:255',
             'business_type' => 'required|string|max:255',
             'business_type_other' => $this->business_type === 'Autres' ? 'required|string|max:255' : 'nullable',
             'usd_to_cdf' => 'required|numeric|min:0',
